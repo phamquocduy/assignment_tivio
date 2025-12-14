@@ -34,14 +34,14 @@ export function MovieDetailModal() {
       <div className="fixed inset-0 bg-black/80" aria-hidden="true" />
 
       <div className="fixed inset-0 overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4">
-          <DialogPanel className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-gray-900 shadow-xl">
+        <div className="flex min-h-full items-center justify-center p-0 sm:p-4">
+          <DialogPanel className="relative w-full max-w-3xl overflow-hidden rounded-none bg-gray-900 shadow-xl sm:rounded-2xl">
             {/* Close button */}
             <button
               onClick={closeModal}
-              className="absolute right-4 top-4 z-10 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
+              className="absolute right-2 top-2 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white transition-colors hover:bg-black/70 sm:right-4 sm:top-4"
             >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -76,7 +76,7 @@ export function MovieDetailModal() {
               <>
                 {/* Backdrop */}
                 {backdropUrl && (
-                  <div className="relative h-48 w-full sm:h-64">
+                  <div className="relative h-32 w-full xs:h-40 sm:h-56 md:h-64">
                     <Image src={backdropUrl} alt={movie.title} fill className="object-cover" priority />
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
                   </div>
@@ -86,7 +86,7 @@ export function MovieDetailModal() {
                   <div className="flex flex-col gap-6 sm:flex-row">
                     {/* Poster */}
                     {imageUrl && (
-                      <div className="relative mx-auto h-72 w-48 flex-shrink-0 overflow-hidden rounded-lg shadow-lg sm:mx-0 sm:-mt-24">
+                      <div className="relative mx-auto aspect-[2/3] w-32 flex-shrink-0 overflow-hidden rounded-lg shadow-lg xs:w-40 sm:mx-0 sm:-mt-24 sm:w-48">
                         <Image src={imageUrl} alt={movie.title} fill className="object-cover" priority />
                       </div>
                     )}

@@ -22,19 +22,19 @@ export function YearRangeFilter() {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-2 xs:flex-row xs:items-center">
         <div className="flex-1">
           <input
             type="number"
-            min={MIN_YEAR}  
+            min={MIN_YEAR}
             max={endYear}
             value={startYear}
             onChange={(e) => handleStartChange(toIntBase10(e.target.value, MIN_YEAR))}
             className="w-full rounded-lg bg-gray-700 px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="From"
+            placeholder="From year"
           />
         </div>
-        <span className="text-gray-400">to</span>
+        <span className="hidden text-gray-400 xs:block">to</span>
         <div className="flex-1">
           <input
             type="number"
@@ -43,7 +43,7 @@ export function YearRangeFilter() {
             value={endYear}
             onChange={(e) => handleEndChange(toIntBase10(e.target.value, CURRENT_YEAR))}
             className="w-full rounded-lg bg-gray-700 px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="To"
+            placeholder="To year"
           />
         </div>
       </div>

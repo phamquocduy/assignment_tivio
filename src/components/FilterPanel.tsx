@@ -37,7 +37,7 @@ export function FilterPanel() {
           <YearRangeFilter />
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <label className="block text-sm font-medium text-gray-300">Rating</label>
           <RatingFilter />
         </div>

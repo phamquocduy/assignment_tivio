@@ -11,6 +11,9 @@ export default {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
+      screens: {
+        xs: '400px',
+      },
     },
   },
   plugins: [],

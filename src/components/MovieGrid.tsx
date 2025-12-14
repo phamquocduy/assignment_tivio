@@ -81,7 +81,7 @@ export function MovieGrid() {
   return (
     <div className="flex flex-col gap-6">
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
           {Array.from({ length: 20 }).map((_, i) => (
             <div key={i} className="animate-pulse">
               <div className="aspect-[2/3] rounded-lg bg-gray-700" />
@@ -94,31 +94,41 @@ export function MovieGrid() {
         <div className="py-12 text-center text-gray-400">No movies found matching your filters.</div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2 xs:gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
             {movies.map((movie) => (
               <MovieCard key={movie.id} movie={movie} onClick={() => openModal(movie.id)} />
             ))}
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={() => setPage(currentPage - 1)}
-              disabled={currentPage <= 1}
-              className="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span className="text-sm text-gray-400">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage(currentPage + 1)}
-              disabled={currentPage >= totalPages}
-              className="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Next
-            </button>
+          <div className="flex flex-col items-center gap-3 xs:flex-row xs:justify-center xs:gap-4">
+            <div className="flex items-center gap-2 xs:gap-4">
+              <button
+                onClick={() => setPage(currentPage - 1)}
+                disabled={currentPage <= 1}
+                className="flex h-10 min-w-[44px] items-center justify-center rounded-lg bg-gray-700 px-3 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50 xs:min-w-0 xs:px-4"
+                aria-label="Previous page"
+              >
+                <span className="hidden xs:inline">Previous</span>
+                <svg className="h-5 w-5 xs:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <span className="whitespace-nowrap text-sm text-gray-400">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                className="flex h-10 min-w-[44px] items-center justify-center rounded-lg bg-gray-700 px-3 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50 xs:min-w-0 xs:px-4"
+                aria-label="Next page"
+              >
+                <span className="hidden xs:inline">Next</span>
+                <svg className="h-5 w-5 xs:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </>
       )}

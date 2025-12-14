@@ -3,7 +3,7 @@ import { DiscoveryMode, FilterPanel, MovieDetailModal, MovieGrid, SortSelect } f
 export default function Home() {
   return (
     <main className="min-h-screen bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 py-4 sm:px-4 sm:py-8">
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-white sm:text-4xl">Movie Discovery</h1>
@@ -21,7 +21,7 @@ export default function Home() {
 
           {/* Main Content */}
           <section className="flex-1">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-col gap-3 xs:flex-row xs:items-center xs:justify-between">
               <h2 className="text-lg font-semibold text-white">Movies</h2>
               <SortSelect />
             </div>

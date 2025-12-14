@@ -47,7 +47,7 @@ export function GenreFilter() {
             </svg>
           </span>
         </ListboxButton>
-        <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-gray-700 py-1 text-sm shadow-lg focus:outline-none">
+        <ListboxOptions className="absolute z-10 mt-1 max-h-[40vh] w-full overflow-auto rounded-lg bg-gray-700 py-1 text-sm shadow-lg focus:outline-none sm:max-h-60">
           {genres.map((genre) => (
             <ListboxOption
               key={genre.id}
