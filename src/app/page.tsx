@@ -1,4 +1,4 @@
-import { DiscoveryMode, FilterPanel, MovieDetailModal, MovieGrid, SortSelect } from '@/components';
+import { DiscoveryMode, FilterPanel, MovieDetailModal, MovieGrid, SortSelect, UrlSync } from '@/components';
 
 export default function Home() {
   return (
@@ -32,6 +32,9 @@ export default function Home() {
 
       {/* Modal */}
       <MovieDetailModal />
+
+      {/* URL Sync */}
+      <UrlSync />
     </main>
   );
 }
