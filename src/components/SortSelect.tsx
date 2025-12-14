@@ -12,7 +12,7 @@ export function SortSelect() {
   const selectedOption = SORT_OPTIONS.find((opt) => opt.value === sort) || SORT_OPTIONS[0];
 
   return (
-    <div className="relative w-full sm:w-48">
+    <div className="relative w-full sm:w-52">
       <Listbox value={sort} onChange={(value: SortOption) => setSort(value)}>
         <ListboxButton className="relative w-full cursor-pointer rounded-lg bg-gray-700 py-2 pl-3 pr-10 text-left text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           <span className="block truncate">{selectedOption.label}</span>
