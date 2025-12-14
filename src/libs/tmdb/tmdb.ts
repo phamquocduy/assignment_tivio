@@ -5,6 +5,11 @@ import { SortOption } from '@/constants';
 
 const TMDB_API_BASE = 'https://api.themoviedb.org/3';
 
+export const TMDB_GENRES_CACHE_DURATION = 24 * 60 * 60; // 24 hours, (genres rarely change)
+export const TMDB_SIMILAR_MOVIES_CACHE_DURATION = 60 * 60; // 1 hour, (similar movies are semi-static)
+export const TMDB_MOVIE_DETAILS_CACHE_DURATION = 60 * 60; // 1 hour, (movie details are semi-static)
+export const TMDB_MOVIES_CACHE_DURATION = 5 * 60; // 5 minutes, (movie lists change more frequently)
+
 function getApiKey(): string {
   const apiKey = process.env.TMDB_API_KEY;
   if (!apiKey) {
@@ -17,7 +22,7 @@ function getApiKey(): string {
 export async function fetchGenres(): Promise<GenresResponse> {
   const response = await fetch(
     `${TMDB_API_BASE}/genre/movie/list?api_key=${getApiKey()}&language=en-US`,
-    { next: { revalidate: 86400 } } // Cache for 24 hours (24 * 60 * 60)
+    { next: { revalidate: TMDB_GENRES_CACHE_DURATION } } 
   );
 
   if (!response.ok) {
@@ -60,7 +65,7 @@ export async function fetchMovies(
 
   const response = await fetch(
     `${TMDB_API_BASE}/discover/movie?${params.toString()}`,
-    { next: { revalidate: 300 } } // Cache for 5 minutes
+    { next: { revalidate: TMDB_MOVIES_CACHE_DURATION } }
   );
 
   if (!response.ok) {
@@ -73,7 +78,7 @@ export async function fetchMovies(
 export async function fetchMovieDetails(id: number): Promise<MovieDetails> {
   const response = await fetch(
     `${TMDB_API_BASE}/movie/${id}?api_key=${getApiKey()}&language=en-US`,
-    { next: { revalidate: 3600 } } // Cache for 1 hour (1 * 60 * 60)
+    { next: { revalidate: TMDB_MOVIE_DETAILS_CACHE_DURATION } }
   );
 
   if (!response.ok) {
@@ -86,7 +91,7 @@ export async function fetchMovieDetails(id: number): Promise<MovieDetails> {
 export async function fetchSimilarMovies(id: number): Promise<MoviesResponse> {
   const response = await fetch(
     `${TMDB_API_BASE}/movie/${id}/similar?api_key=${getApiKey()}&language=en-US&page=1`,
-    { next: { revalidate: 3600 } } // Cache for 1 hour (1 * 60 * 60)
+    { next: { revalidate: TMDB_SIMILAR_MOVIES_CACHE_DURATION } }
   );
 
   if (!response.ok) {
