@@ -1,6 +1,30 @@
 import { DiscoveryMode, FilterPanel, MovieDetailModal, MovieGrid, SortSelect, UrlSync } from '@/components';
+import { fetchMovies } from '@/libs/tmdb';
+import { DEFAULT_RATING, DEFAULT_SORT } from '@/constants';
+import { parseFilterParams } from '@/utils';
 
-export default function Home() {
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function Home({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const parsed = parseFilterParams((key) => {
+    const value = params[key];
+    return typeof value === 'string' ? value : null;
+  });
+
+  // Build filters with defaults for server-side fetch
+  const initialMovies = await fetchMovies(
+    {
+      genres: parsed.genres,
+      yearRange: parsed.yearRange,
+      minRating: parsed.minRating ?? DEFAULT_RATING,
+    },
+    parsed.page ?? 1,
+    parsed.sort ?? DEFAULT_SORT
+  );
+
   return (
     <main className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-3 py-4 sm:px-4 sm:py-8">
@@ -25,7 +49,8 @@ export default function Home() {
               <h2 className="text-lg font-semibold text-white">Movies</h2>
               <SortSelect />
             </div>
-            <MovieGrid />
+            
+            <MovieGrid initialData={initialMovies} />
           </section>
         </div>
       </div>

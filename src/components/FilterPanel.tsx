@@ -1,7 +1,7 @@
 'use client';
 
 import { useMovieStore, selectFilters } from '@/stores/movieStore';
-import { CURRENT_YEAR, MIN_YEAR } from '@/constants';
+import { CURRENT_YEAR, MIN_YEAR, DEFAULT_RATING } from '@/constants';
 
 import { GenreFilter, YearRangeFilter, RatingFilter } from './filters';
 
@@ -11,9 +11,9 @@ export function FilterPanel() {
 
   const hasActiveFilters =
     filters.genres.length > 0 ||
-    filters.minRating > 0 ||
-    filters.yearRange[0] > MIN_YEAR ||
-    filters.yearRange[1] < CURRENT_YEAR;
+    filters.minRating !== DEFAULT_RATING ||
+    filters.yearRange[0] !== MIN_YEAR ||
+    filters.yearRange[1] !== CURRENT_YEAR;
 
   return (
     <div className="rounded-xl bg-gray-800/50 p-4">

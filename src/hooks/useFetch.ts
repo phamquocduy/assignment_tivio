@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import axios, { AxiosError, CancelTokenSource } from 'axios';
+import axios, { AxiosError } from 'axios';
+
 import {
   TMDB_GENRES_CACHE_DURATION,
   TMDB_MOVIE_DETAILS_CACHE_DURATION,
@@ -33,7 +34,7 @@ import {
 // - Genres are fetched once and reused across the session
 // - Instant UI when navigating to previously viewed content
 
-interface CacheEntry<T> {
+type CacheEntry<T> = {
   data: T;
   timestamp: number; // When the data was cached (ms since epoch)
 }
@@ -101,42 +102,47 @@ function setCache<T>(url: string, data: T): void {
   cache.set(url, { data, timestamp: Date.now() });
 }
 
-interface UseFetchOptions {
+type UseFetchOptions<T> = {
   /** Whether to fetch immediately on mount */
   immediate?: boolean;
   /** Dependencies that trigger refetch when changed */
   deps?: unknown[];
+  /** Initial data from server-side fetch (SSR/SSG) */
+  initialData?: T;
 }
 
-interface UseFetchResult<T> {
+type UseFetchResult<T> = {
   data: T | null;
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
-export function useFetch<T>(url: string | null, options: UseFetchOptions = {}): UseFetchResult<T> {
-  const { immediate = true, deps = [] } = options;
+export function useFetch<T>(url: string | null, options: UseFetchOptions<T> = {}): UseFetchResult<T> {
+  const { immediate = true, deps = [], initialData } = options;
 
   const [data, setData] = useState<T | null>(() => {
+    // Priority: initialData (SSR) > cache > null
+    if (initialData) {
+      if (url) setCache(url, initialData);
+      return initialData;
+    }
+
     if (url) {
       return getFromCache<T>(url);
     }
-
     return null;
   });
 
   const [isLoading, setIsLoading] = useState(() => {
-    if (url && getFromCache<T>(url)) {
-      return false;
-    }
-
+    if (initialData) return false;
+    if (url && getFromCache<T>(url)) return false;
     return immediate && !!url;
   });
 
   const [error, setError] = useState<string | null>(null);
 
-  const cancelTokenRef = useRef<CancelTokenSource | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const execute = useCallback(
     async (bypassCache = false) => {
@@ -164,31 +170,36 @@ export function useFetch<T>(url: string | null, options: UseFetchOptions = {}): 
           const result = (await existingRequest) as T;
           setData(result);
           setError(null);
+          return; // Successfully reused existing request
         } catch (err) {
-          if (!axios.isCancel(err)) {
+          // If the shared request was canceled/aborted, fall through to make a fresh request
+          const isAborted = err instanceof DOMException && err.name === 'AbortError';
+          const isCanceled = axios.isCancel(err);
+          if (!isAborted && !isCanceled) {
+            // Real error - set it and return
             setError(getErrorMessage(err));
+            setIsLoading(false);
+            return;
           }
-        } finally {
-          setIsLoading(false);
+          // Canceled - fall through to make fresh request
         }
-        return; // Reused existing request
       }
 
       // STEP 3: Cancel any previous request from this hook instance
       // Prevents race conditions when URL changes rapidly
-      if (cancelTokenRef.current) {
-        cancelTokenRef.current.cancel();
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
 
-      const source = axios.CancelToken.source();
-      cancelTokenRef.current = source;
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
 
       setIsLoading(true);
       setError(null);
 
       // STEP 4: Make the actual network request
       const requestPromise = axios
-        .get<T>(url, { cancelToken: source.token })
+        .get<T>(url, { signal: controller.signal })
         .then((response) => {
           // Store successful response in cache for future use
           setCache(url, response.data);
@@ -207,7 +218,9 @@ export function useFetch<T>(url: string | null, options: UseFetchOptions = {}): 
         const result = await requestPromise;
         setData(result);
       } catch (err) {
-        if (axios.isCancel(err)) return; // Ignore cancelled requests
+        // Ignore aborted requests
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+        if (axios.isCancel(err)) return;
         setError(getErrorMessage(err));
       } finally {
         setIsLoading(false);
@@ -226,7 +239,7 @@ export function useFetch<T>(url: string | null, options: UseFetchOptions = {}): 
     }
 
     return () => {
-      cancelTokenRef.current?.cancel();
+      abortControllerRef.current?.abort();
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `execute` is stable (depends only on `url`), `deps` spread is intentional for refetch triggers

@@ -11,11 +11,15 @@ import {
 } from '@/stores/movieStore';
 import type { Movie, MoviesResponse } from '@/libs/tmdb';
 import { useFetch } from '@/hooks';
-
-import { MovieCard } from './MovieCard';
 import { CURRENT_YEAR } from '@/constants';
 
-export function MovieGrid() {
+import { MovieCard } from './MovieCard';
+
+interface MovieGridProps {
+  initialData?: MoviesResponse;
+}
+
+export function MovieGrid({ initialData }: MovieGridProps) {
   const filters = useMovieStore(selectFilters);
   const currentPage = useMovieStore(selectCurrentPage);
   const totalPages = useMovieStore(selectTotalPages);
@@ -46,7 +50,7 @@ export function MovieGrid() {
     return `/api/movies?${params.toString()}`;
   }, [currentPage, filters, sort]);
 
-  const { data, isLoading, error, refetch } = useFetch<MoviesResponse>(url);
+  const { data, isLoading, error, refetch } = useFetch<MoviesResponse>(url, { initialData });
   const movies: Movie[] = useMemo(() => data?.results ?? [], [data]);
 
   useEffect(() => {

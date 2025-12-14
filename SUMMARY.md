@@ -27,6 +27,7 @@
 | **Request Deduplication** | Prevents duplicate simultaneous API calls |
 | **Shareable URLs** | Filter state and movie ID persisted in URL query params |
 | **Loading States** | Skeleton loaders and spinners throughout |
+| **Server-Side Data Fetching** | Initial movies fetched on server for faster FCP and SEO |
 
 ---
 
@@ -82,10 +83,13 @@ Given more time, I would add:
 
 | Improvement | Reason |
 |-------------|--------|
+| **Accessibility (a11y)** | Add aria-labels to interactive elements, visible focus indicators, and proper ARIA roles for WCAG 2.1 compliance |
 | **i18n Translations** | Replace hardcoded text with translation keys for multi-language support |
 | **Enhanced Pagination** | Add page size selector, jump-to-page input, and keyboard navigation |
 | **Route Groups** | Use Next.js route groups for flexible layouts (e.g., different headers for auth pages) |
 | **Icon Library** | Replace inline SVGs with a proper icon library (e.g., Heroicons) |
+| **TanStack Query** | Replace custom useFetch with TanStack Query library for better maintainability, DevTools, and community support |
+| **URL Sync with useSearchParams** | Use Next.js `useSearchParams()` for reading URL params (better integration with App Router internals) |
 | **Unit Testing** | React Testing Library for hook and functions tests |
 | **E2E Testing** | Playwright or Cypress for critical user flows (filtering, modal, discovery mode) |
 
